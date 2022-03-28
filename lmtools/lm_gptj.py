@@ -12,7 +12,7 @@ class LM_GPTJ(LMSamplerBaseClass):
         Supported model names: 'EleutherAI/gpt-j-6B'.
         """
         # check if model_name is supported
-        if model_name not in ["EleutherAI/gpt-j-6B"]:
+        if "EleutherAI/gpt-j-6B" not in model_name:
             raise ValueError(
                 "Model name not supported. Supported model names: 'EleutherAI/gpt-j-6B'."
             )
@@ -21,7 +21,7 @@ class LM_GPTJ(LMSamplerBaseClass):
         # initialize model with model_name
         print(f"Loading {model_name}...")
         self.model = AutoModelForCausalLM.from_pretrained(model_name)
-        self.tokenizer = AutoTokenizer.from_pretrained(model_name)
+        self.tokenizer = AutoTokenizer.from_pretrained('EleutherAI/gpt-j-6B')
 
         # get the number of attention layers
         n_blocks = self.model.config.n_layer

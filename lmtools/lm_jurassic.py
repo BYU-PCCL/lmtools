@@ -6,8 +6,6 @@ import requests
 from lmtools.lmsampler_baseclass import LMSamplerBaseClass
 
 API_KEY = os.environ.get("AI21_API_KEY")
-if not API_KEY:
-    raise Exception('NO API KEY. PLEASE ENTER UNDER "export AI21_API_KEY=????"')
 
 
 class LM_JURASSIC(LMSamplerBaseClass):
@@ -16,6 +14,8 @@ class LM_JURASSIC(LMSamplerBaseClass):
         Supported models: 'j1-jumbo', 'j1-large'
         """
         super().__init__(model_name)
+        if not API_KEY:
+            raise Exception('NO API KEY. PLEASE ENTER UNDER "export AI21_API_KEY=????"')
         self.engine = model_name
         # make sure engine is a valid model
         if self.engine not in ["j1-jumbo", "j1-large"]:
