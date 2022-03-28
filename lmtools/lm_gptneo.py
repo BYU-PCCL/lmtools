@@ -12,11 +12,14 @@ class LM_GPTNEO(LMSamplerBaseClass):
         Supported models: 'EleutherAI/gpt-neo-2.7B', 'EleutherAI/gpt-neo-1.3B', 'EleutherAI/gpt-neo-125M'
         """
         # check if model name is supported
-        if model_name not in [
-            "EleutherAI/gpt-neo-2.7B",
-            "EleutherAI/gpt-neo-1.3B",
-            "EleutherAI/gpt-neo-125M",
-        ]:
+        if not any(
+            str in model_name
+            for str in [
+                "EleutherAI/gpt-neo-2.7B",
+                "EleutherAI/gpt-neo-1.3B",
+                "EleutherAI/gpt-neo-125M",
+            ]
+        ):
             raise ValueError(
                 "Model name not supported. Supported models: EleutherAI/gpt-neo-2.7B, EleutherAI/gpt-neo-1.3B, EleutherAI/gpt-neo-125M"
             )

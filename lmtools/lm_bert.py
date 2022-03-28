@@ -12,7 +12,7 @@ class LM_BERT(LMSamplerBaseClass):
         Supported models: 'bert-base-uncased', 'bert-base-cased'
         """
         # check if model_name is supported
-        if model_name not in ["bert-base-uncased", "bert-base-cased"]:
+        if not any(str in model_name for str in ["bert-base-uncased", "bert-base-cased"]):
             raise ValueError(
                 "Model name not supported. Must be one of: bert-base-uncased, bert-base-cased"
             )
