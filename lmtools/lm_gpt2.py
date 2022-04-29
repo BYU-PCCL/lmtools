@@ -1,9 +1,10 @@
 import numpy as np
 import torch
-from transformers import GPT2LMHeadModel, GPT2Tokenizer
+from transformers import GPT2LMHeadModel, GPT2Tokenizer, StoppingCriteriaList
 
 from lmtools.lm_utils import get_device_map
 from lmtools.lmsampler_baseclass import LMSamplerBaseClass
+from lmtools.KeywordsStoppingCriteria import KeywordsStoppingCriteria
 
 
 class LM_GPT2(LMSamplerBaseClass):
@@ -84,7 +85,16 @@ class LM_GPT2(LMSamplerBaseClass):
 
         return self.pred_dict
 
-    def sample_several(self, prompt, temperature=0, n_tokens=10):
+    def sample_several(self, prompt, temperature=0, n_tokens=10, stop_tokens=[]):
+        if len(stop_tokens) > 0:
+            # if the elements of stop_tokens are strings, tokenize
+            if isinstance(stop_tokens[0], str):
+                stop_tokens = [self.tokenizer.encode(w)[0] for w in stop_tokens]
+            stop_criteria = KeywordsStoppingCriteria(stop_tokens)
+            criteria_list = StoppingCriteriaList([stop_criteria])
+        else:
+            criteria_list = StoppingCriteriaList()
+
         inputs = self.tokenizer.encode(prompt, return_tensors="pt").to(self.device)
         if temperature > 0:
             tokens = self.model.generate(
@@ -92,11 +102,16 @@ class LM_GPT2(LMSamplerBaseClass):
                 max_new_tokens=n_tokens,
                 do_sample=True,
                 temperature=temperature,
+                stopping_criteria=criteria_list,
             ).to("cpu")
         else:
             tokens = self.model.generate(
-                input_ids=inputs, max_new_tokens=n_tokens, temperature=temperature
+                input_ids=inputs, max_new_tokens=n_tokens, temperature=temperature,
+                stopping_criteria=criteria_list,
             ).to("cpu")
+        # if stop_token is at the end of the generated sequence, remove it
+        if tokens[0,-1] in stop_tokens:
+            tokens = tokens[:,:-1]
         preds = self.tokenizer.batch_decode(tokens, clean_up_tokenization_spaces=True)
         return preds[0][len(prompt) + 1 :]
 
@@ -104,7 +119,12 @@ class LM_GPT2(LMSamplerBaseClass):
 if __name__ == "__main__":
 
     model = LM_GPT2("gpt2")
+    # text = model.sample_several(
+    #     prompt="What is the capital of France?\nThe capital of France is"
+    # )
     text = model.sample_several(
-        prompt="What is the capital of France?\nThe capital of France is"
+        # prompt = "{0:'a'},{1:'b'},{", stop_tokens=["}", '},'],
+        prompt = "{0:'a'},{1:'b'},{", stop_tokens=[92, 5512],
+
     )
     print(text)

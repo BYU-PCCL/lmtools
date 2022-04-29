@@ -1,8 +1,9 @@
 import numpy as np
 import torch
-from transformers import GPT2Tokenizer, GPTNeoForCausalLM
+from transformers import GPT2Tokenizer, GPTNeoForCausalLM, StoppingCriteriaList
 
 from lmtools.lmsampler_baseclass import LMSamplerBaseClass
+from lmtools.KeywordsStoppingCriteria import KeywordsStoppingCriteria
 
 
 class LM_GPTNEO(LMSamplerBaseClass):
@@ -67,7 +68,16 @@ class LM_GPTNEO(LMSamplerBaseClass):
 
         return self.pred_dict
 
-    def sample_several(self, prompt, temperature=0, n_tokens=10):
+    def sample_several(self, prompt, temperature=0, n_tokens=10, stop_tokens=[]):
+        if len(stop_tokens) > 0:
+            # if the elements of stop_tokens are strings, tokenize
+            if isinstance(stop_tokens[0], str):
+                stop_tokens = [self.tokenizer.encode(w)[0] for w in stop_tokens]
+            stop_criteria = KeywordsStoppingCriteria(stop_tokens)
+            criteria_list = StoppingCriteriaList([stop_criteria])
+        else:
+            criteria_list = StoppingCriteriaList()
+
         inputs = self.tokenizer.encode(prompt, return_tensors="pt").to(self.device)
         if temperature > 0:
             tokens = self.model.generate(
@@ -75,11 +85,16 @@ class LM_GPTNEO(LMSamplerBaseClass):
                 max_new_tokens=n_tokens,
                 do_sample=True,
                 temperature=temperature,
+                stopping_criteria=criteria_list,
             ).to("cpu")
         else:
             tokens = self.model.generate(
-                input_ids=inputs, max_new_tokens=n_tokens, temperature=temperature
+                input_ids=inputs, max_new_tokens=n_tokens, temperature=temperature,
+                stopping_criteria=criteria_list,
             ).to("cpu")
+        # if stop_token is at the end of the generated sequence, remove it
+        if tokens[0,-1] in stop_tokens:
+            tokens = tokens[:,:-1]
         preds = self.tokenizer.batch_decode(tokens, clean_up_tokenization_spaces=True)
         return preds[0][len(prompt) + 1 :]
 

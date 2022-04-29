@@ -47,13 +47,13 @@ class LM_GPT3(LMSamplerBaseClass):
             time.sleep(wait_time)
         return sorted_logprobs
 
-    def sample_several(self, prompt, temperature=0, n_tokens=10, stop=[]):
+    def sample_several(self, prompt, temperature=0, n_tokens=10, stop_tokens=[]):
         response = openai.Completion.create(
             engine=self.engine,
             prompt=prompt,
             max_tokens=n_tokens,
             temperature=temperature,
-            stop=stop,
+            stop=stop_tokens,
         )
         return response["choices"][0]["text"]
 

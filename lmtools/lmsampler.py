@@ -64,8 +64,8 @@ class LMSampler(LMSamplerBaseClass):
     def send_prompt(self, prompt, n_probs=100):
         return self.model.send_prompt(prompt, n_probs)
 
-    def sample_several(self, prompt, temperature=0, n_tokens=10, stop=[]):
-        return self.model.sample_several(prompt, temperature, n_tokens, stop)
+    def sample_several(self, prompt, temperature=0, n_tokens=10, stop_tokens=[]):
+        return self.model.sample_several(prompt, temperature, n_tokens, stop_tokens)
 
 
 if __name__ == "__main__":
