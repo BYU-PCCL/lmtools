@@ -72,7 +72,7 @@ class LM_JURASSIC(LMSamplerBaseClass):
             time.sleep(wait_time)
         return sorted_logprobs
 
-    def sample_several(self, prompt, temperature=0, n_tokens=10):
+    def sample_several(self, prompt, temperature=0, n_tokens=10, stop_tokens=[]):
         response = requests.post(
             f"https://api.ai21.com/studio/v1/{self.engine}/complete",
             headers={"Authorization": "Bearer " + str(self.API_KEY)},
@@ -81,6 +81,7 @@ class LM_JURASSIC(LMSamplerBaseClass):
                 "numResults": 1,
                 "maxTokens": n_tokens,
                 "temperature": temperature,
+                "stopSequences": stop_tokens,
             },
         )
         response_dict = response.json()
@@ -90,6 +91,6 @@ class LM_JURASSIC(LMSamplerBaseClass):
 
 if __name__ == "__main__":
     lm = LM_JURASSIC("j1-jumbo")
-    probs = lm.send_prompt("What is the capital of France?\nThe capital of France is")
-    probs = lm.send_prompt(prompt)
+    # probs = lm.send_prompt("What is the capital of France?\nThe capital of France is")
+    probs = lm.sample_several("{0:'a'},{1:'b'},{2", stop_tokens=["}"])
     print(probs)
