@@ -17,7 +17,7 @@ class LMSampler(LMSamplerBaseClass):
         super().__init__(model_name)
         """
         Supported models:
-            - GPT-3: 'gpt3-ada', 'gpt3-babbage', 'gpt3-curie', 'gpt3-davinci', 'ada', 'babbage', 'curie', 'davinci', 'text-davinci-002'
+            - GPT-3: 'gpt3-ada', 'gpt3-babbage', 'gpt3-curie', 'gpt3-davinci', 'ada', 'babbage', 'curie', 'davinci', 'text-ada-001', 'text-babbage-001', 'text-curie-001', 'text-davinci-002'
             - GPT-2: 'gpt2', 'gpt2-medium', 'gpt2-large', 'gpt2-xl', 'distilgpt2'
             - GPT-J: 'EleutherAI/gpt-j-6B'
             - GPT-Neo: 'EleutherAI/gpt-neo-2.7B', 'EleutherAI/gpt-neo-1.3B', 'EleutherAI/gpt-neo-125M'
@@ -33,6 +33,9 @@ class LMSampler(LMSamplerBaseClass):
             "babbage",
             "curie",
             "davinci",
+            "text-ada-001",
+            "text-babbage-001",
+            "text-curie-001",
             "text-davinci-002",
         ]:
             self.model = LM_GPT3(model_name)
