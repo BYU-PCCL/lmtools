@@ -8,7 +8,7 @@ from lmtools.lmsampler_baseclass import LMSamplerBaseClass
 class LM_GPT3(LMSamplerBaseClass):
     def __init__(self, model_name):
         """
-        Supported models: 'ada', 'babbage', 'curie', 'davinci', 'gpt3-ada', gpt3-babbage', gpt3-curie', gpt3-davinci'
+        Supported models: 'ada', 'babbage', 'curie', 'davinci', 'gpt3-ada', gpt3-babbage', gpt3-curie', gpt3-davinci', 'text-davinci-002'
         """
         super().__init__(model_name)
         if "gpt3" in model_name:
@@ -17,9 +17,9 @@ class LM_GPT3(LMSamplerBaseClass):
         else:
             self.engine = self.model_name
         # make sure engine is a valid model
-        if self.engine not in ["ada", "babbage", "curie", "davinci"]:
+        if self.engine not in ["ada", "babbage", "curie", "davinci", "text-davinci-002"]:
             raise ValueError(
-                "Invalid model name. Must be one of: 'ada', 'babbage', 'curie', 'davinci'"
+                "Invalid model name. Must be one of: 'ada', 'babbage', 'curie', 'davinci'", "text-davinci-002"
             )
         # make sure API key is set
         if openai.api_key is None:
@@ -47,18 +47,19 @@ class LM_GPT3(LMSamplerBaseClass):
             time.sleep(wait_time)
         return sorted_logprobs
 
-    def sample_several(self, prompt, temperature=0, n_tokens=10):
+    def sample_several(self, prompt, temperature=0, n_tokens=10, stop=[]):
         response = openai.Completion.create(
             engine=self.engine,
             prompt=prompt,
             max_tokens=n_tokens,
             temperature=temperature,
+            stop=stop,
         )
         return response["choices"][0]["text"]
 
 
 if __name__ == "__main__":
-    # test LM_GPT2
+    # test LM_GPT3
     lm = LM_GPT3("gpt3-ada")
     text = lm.sample_several(
         prompt="What is the capital of France?\nThe capital of France is",

@@ -17,7 +17,7 @@ class LMSampler(LMSamplerBaseClass):
         super().__init__(model_name)
         """
         Supported models:
-            - GPT-3: 'gpt3-ada', 'gpt3-babbage', 'gpt3-curie', 'gpt3-davinci', 'ada', 'babbage', 'curie', 'davinci'
+            - GPT-3: 'gpt3-ada', 'gpt3-babbage', 'gpt3-curie', 'gpt3-davinci', 'ada', 'babbage', 'curie', 'davinci', 'text-davinci-002'
             - GPT-2: 'gpt2', 'gpt2-medium', 'gpt2-large', 'gpt2-xl', 'distilgpt2'
             - GPT-J: 'EleutherAI/gpt-j-6B'
             - GPT-Neo: 'EleutherAI/gpt-neo-2.7B', 'EleutherAI/gpt-neo-1.3B', 'EleutherAI/gpt-neo-125M'
@@ -33,6 +33,7 @@ class LMSampler(LMSamplerBaseClass):
             "babbage",
             "curie",
             "davinci",
+            "text-davinci-002",
         ]:
             self.model = LM_GPT3(model_name)
         # if any of 'gpt2', ... 'gpt2-xl' in model_name
@@ -63,8 +64,8 @@ class LMSampler(LMSamplerBaseClass):
     def send_prompt(self, prompt, n_probs=100):
         return self.model.send_prompt(prompt, n_probs)
 
-    def sample_several(self, prompt, temperature=0, n_tokens=10):
-        return self.model.sample_several(prompt, temperature, n_tokens)
+    def sample_several(self, prompt, temperature=0, n_tokens=10, stop=[]):
+        return self.model.sample_several(prompt, temperature, n_tokens, stop)
 
 
 if __name__ == "__main__":
