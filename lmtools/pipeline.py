@@ -58,12 +58,4 @@ def main():
 
 
 if __name__ == "__main__":
-    import sys
-    import argparse
-
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-d', '--ds_path', type=str, help='path to dataset', required=True)
-    parser.add_argument('-m', '--model_name', type=str, help='path to model', required=True)
-    args = parser.parse_args()
-
-    run_experiment(ds_path=args.ds_path, model_name=args.model_name)
+    main()
